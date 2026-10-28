@@ -15,20 +15,44 @@ use Illuminate\View\View;
 
 class CommunityController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $posts = Post::query()
+        $query = Post::query()
             ->with(['author', 'category', 'tags'])
-            ->withCount(['comments', 'reactions'])
+            ->withCount([
+                'comments' => fn ($query) => $query->where('status', 'visible'),
+                'reactions',
+            ])
             ->where('status', 'published')
-            ->where(function ($query): void {
-                $query->whereNull('published_at')->orWhere('published_at', '<=', now());
-            })
-            ->latest('published_at')
-            ->latest()
-            ->paginate(12);
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()));
 
-        return view('community.index', compact('posts'));
+        if ($request->filled('q')) {
+            $term = trim((string) $request->query('q'));
+            $query->where(function ($query) use ($term): void {
+                $query->where('title', 'like', '%'.$term.'%')
+                    ->orWhere('excerpt', 'like', '%'.$term.'%')
+                    ->orWhere('body', 'like', '%'.$term.'%')
+                    ->orWhereHas('tags', fn ($tags) => $tags->where('name', 'like', '%'.$term.'%'));
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->whereHas('category', fn ($category) => $category->where('slug', $request->query('category')));
+        }
+
+        if ($request->query('sort') === 'popular') {
+            $query->orderByDesc('views_count')->latest();
+        } else {
+            $query->latest('published_at')->latest();
+        }
+
+        $posts = $query->paginate(12)->withQueryString();
+        $categories = Category::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $popularTags = Tag::query()->withCount(['posts' => fn ($query) => $query->where('status', 'published')])->orderByDesc('posts_count')->orderBy('name')->take(8)->get();
+        $memberCount = User::query()->count();
+        $publishedCount = Post::query()->where('status', 'published')->count();
+
+        return view('community.index', compact('posts', 'categories', 'popularTags', 'memberCount', 'publishedCount'));
     }
 
     public function show(Post $post): View
