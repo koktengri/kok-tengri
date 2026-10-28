@@ -23,10 +23,10 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/posts/{post}/comments', [InteractionController::class, 'comment'])->middleware('throttle:20,1')->name('comments.store');
     Route::post('/posts/{post}/reaction', [InteractionController::class, 'react'])->name('posts.react');
     Route::post('/posts/{post}/bookmark', [InteractionController::class, 'bookmark'])->name('posts.bookmark');
-    Route::post('/posts/{post}/tags', [InteractionController::class, 'tag'])->name('posts.tags');
+    Route::post('/posts/{post}/tags', [InteractionController::class, 'tag'])->name('posts.tags');\n    Route::get('/bookmarks', [CommunityController::class, 'bookmarks'])->name('bookmarks.index');
 });
 
 Route::middleware(['auth'])->prefix('admin/community')->name('community.admin.')->group(function (): void {
     Route::get('/members', [CommunityController::class, 'members'])->name('members');
-    Route::patch('/members/{user}/role', [CommunityController::class, 'updateRole'])->name('members.role');
+    Route::patch('/members/{user}/role', [CommunityController::class, 'updateRole'])->name('members.role');\n    Route::get('/comments/pending', [CommunityController::class, 'pendingComments'])->name('comments.pending');\n    Route::patch('/comments/{comment}', [CommunityController::class, 'moderateComment'])->name('comments.moderate');
 });
