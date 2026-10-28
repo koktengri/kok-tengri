@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bookmark;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
@@ -80,14 +82,33 @@ class CommunityController extends Controller
             ->take(8);
 
         foreach ($tagNames as $name) {
-            $tag = Tag::firstOrCreate(
-                ['slug' => Str::slug($name)],
-                ['name' => $name]
-            );
+            $tag = Tag::firstOrCreate(['slug' => Str::slug($name)], ['name' => $name]);
             $post->tags()->syncWithoutDetaching([$tag->id]);
         }
 
         return redirect()->route('posts.show', $post)->with('status', 'Gönderin yayımlandı.');
+    }
+
+    public function bookmarks(): View
+    {
+        $bookmarks = auth()->user()->bookmarks()->with('post.author')->latest()->paginate(20);
+        return view('community.bookmarks', compact('bookmarks'));
+    }
+
+    public function pendingComments(): View
+    {
+        abort_unless(auth()->user()->hasRole('admin', 'editor'), 403);
+        $comments = Comment::where('status', 'pending')->with(['author', 'post'])->latest()->paginate(30);
+        return view('community.pending-comments', compact('comments'));
+    }
+
+    public function moderateComment(Request $request, Comment $comment): RedirectResponse
+    {
+        abort_unless($request->user()->hasRole('admin', 'editor'), 403);
+        $data = $request->validate(['status' => ['required', 'in:visible,rejected']]);
+        $comment->update(['status' => $data['status']]);
+
+        return back()->with('status', 'Yorum moderasyonu güncellendi.');
     }
 
     public function members(): View
