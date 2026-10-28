@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ $post->title }} · Kök Tengri</title><script src="https://cdn.tailwindcss.com"></script></head>
+<body class="bg-slate-50 text-slate-900"><main class="mx-auto max-w-3xl px-4 py-8"><a href="/" class="font-semibold text-blue-700">← Akışa dön</a>
+@if(session('status'))<div class="mt-4 rounded-lg border border-green-200 bg-green-50 p-3 text-green-800">{{ session('status') }}</div>@endif
+<article class="mt-5 rounded-xl border bg-white p-5 sm:p-8"><div class="text-sm text-slate-500">{{ $post->author->name }} · {{ $post->created_at->format('d.m.Y H:i') }} · {{ $post->views_count }} görüntülenme</div><h1 class="mt-3 text-3xl font-extrabold leading-tight">{{ $post->title }}</h1>@if($post->excerpt)<p class="mt-4 text-lg text-slate-600">{{ $post->excerpt }}</p>@endif
+@if($post->tags->isNotEmpty())<div class="mt-4 flex flex-wrap gap-2">@foreach($post->tags as $tag)<span class="rounded-full bg-slate-100 px-3 py-1 text-sm">#{{ $tag->name }}</span>@endforeach</div>@endif
+<div class="mt-7 whitespace-pre-wrap break-words leading-8">{{ $post->body }}</div>
+<div class="mt-8 flex flex-wrap gap-2 border-t pt-5">@auth
+<form method="post" action="{{ route('posts.react', $post) }}">@csrf<input type="hidden" name="reaction" value="like"><button class="rounded-lg border px-3 py-2 hover:bg-slate-100">👍 Beğen ({{ $post->reactions()->count() }})</button></form>
+<form method="post" action="{{ route('posts.react', $post) }}">@csrf<input type="hidden" name="reaction" value="love"><button class="rounded-lg border px-3 py-2 hover:bg-slate-100">❤️ Sev</button></form>
+<form method="post" action="{{ route('posts.react', $post) }}">@csrf<input type="hidden" name="reaction" value="insightful"><button class="rounded-lg border px-3 py-2 hover:bg-slate-100">💡 Faydalı</button></form>
+<form method="post" action="{{ route('posts.bookmark', $post) }}">@csrf<button class="rounded-lg border px-3 py-2 hover:bg-slate-100">🔖 Kaydet</button></form>
+@else<a href="{{ route('login') }}" class="rounded-lg border px-3 py-2">Etkileşim için giriş yap</a>@endauth</div>
+</article>
+<section class="mt-6 rounded-xl border bg-white p-5 sm:p-8"><h2 class="text-xl font-bold">Yorumlar ({{ $comments->count() }})</h2>@auth<form method="post" action="{{ route('comments.store', $post) }}" class="mt-4">@csrf<textarea name="body" required minlength="2" maxlength="3000" rows="3" placeholder="Yorumunu yaz..." class="w-full rounded-lg border px-3 py-3"></textarea><button class="mt-2 rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white">Yorum gönder</button><p class="mt-2 text-xs text-slate-500">Üye yorumları moderasyon onayına alınabilir.</p></form>@else<p class="mt-3 text-slate-600"><a href="{{ route('login') }}" class="text-blue-700 underline">Giriş yap</a> ve sohbete katıl.</p>@endauth
+<div class="mt-6 space-y-4">@forelse($comments as $comment)<div class="border-t pt-4"><div class="text-sm font-semibold">{{ $comment->author->name }} <span class="font-normal text-slate-500">· {{ $comment->created_at->format('d.m.Y H:i') }}</span></div><p class="mt-2 whitespace-pre-wrap leading-7">{{ $comment->body }}</p></div>@empty<p class="border-t pt-4 text-slate-500">Henüz yorum yok. İlk yorumu sen yaz.</p>@endforelse</div></section></main></body></html>
