@@ -1,0 +1,66 @@
+name: Deploy Kök Tengri
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: koktengri-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to koktengri.org
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: fileinfo
+          coverage: none
+
+      - name: Validate PHP syntax
+        run: |
+          find app database routes -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.KOKTENGRI_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.KOKTENGRI_SSH_KNOWN_HOSTS }}
+        run: |
+          test -n "$SSH_PRIVATE_KEY" || { echo "Missing KOKTENGRI_SSH_PRIVATE_KEY secret"; exit 1; }
+          test -n "$SSH_KNOWN_HOSTS" || { echo "Missing KOKTENGRI_SSH_KNOWN_HOSTS secret"; exit 1; }
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        env:
+          SSH_HOST: ${{ secrets.KOKTENGRI_SSH_HOST }}
+          SSH_USER: ${{ secrets.KOKTENGRI_SSH_USER }}
+        run: |
+          test -n "$SSH_HOST" || { echo "Missing KOKTENGRI_SSH_HOST secret"; exit 1; }
+          test -n "$SSH_USER" || { echo "Missing KOKTENGRI_SSH_USER secret"; exit 1; }
+          ssh -o BatchMode=yes -o StrictHostKeyChecking=yes "$SSH_USER@$SSH_HOST" 'bash -se' <<'REMOTE'
+          set -euo pipefail
+          cd /www/wwwroot/koktengri.org
+
+          git pull --ff-only origin main
+
+          export COMPOSER_ALLOW_SUPERUSER=1
+          /www/server/php/84/bin/php -d extension=/www/server/php/84/lib/php/extensions/no-debug-non-zts-20240924/fileinfo.so /usr/bin/composer install --no-dev --optimize-autoloader --no-interaction
+
+          /www/server/php/84/bin/php -d extension=/www/server/php/84/lib/php/extensions/no-debug-non-zts-20240924/fileinfo.so artisan migrate --force
+          /www/server/php/84/bin/php -d extension=/www/server/php/84/lib/php/extensions/no-debug-non-zts-20240924/fileinfo.so artisan optimize:clear
+          /www/server/php/84/bin/php -d extension=/www/server/php/84/lib/php/extensions/no-debug-non-zts-20240924/fileinfo.so artisan filament:upgrade
+
+          echo "Deployment commands completed."
+          REMOTE
