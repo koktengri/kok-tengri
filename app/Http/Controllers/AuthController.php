@@ -27,7 +27,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role' => 'member',
+            'role' => User::query()->doesntExist() ? 'admin' : 'member',
         ]);
 
         Auth::login($user);
