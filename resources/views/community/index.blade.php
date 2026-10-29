@@ -31,6 +31,7 @@
         </form>
         <nav class="ml-auto flex items-center gap-2 text-sm">
             <a href="{{ route('home') }}" class="hidden rounded-lg px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 sm:inline-flex">Keşfet</a>
+            <a href="{{ route('members.index') }}" class="hidden rounded-lg px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 sm:inline-flex">Üyeler</a>
             @auth
                 <a href="{{ route('bookmarks.index') }}" class="hidden rounded-lg px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 sm:inline-flex">Kaydedilenler</a>
                 @if(auth()->user()->hasRole('admin', 'editor'))
@@ -129,7 +130,7 @@
                         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf0f8] text-sm font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($post->author->name, 0, 1)) }}</div>
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
-                                <span class="font-semibold text-slate-800">{{ $post->author->name }}</span><span>·</span>
+                                <a href="{{ route('members.show', $post->author) }}" class="font-semibold text-slate-800 hover:text-[#234e8a]">{{ $post->author->name }}</a><span>·</span>
                                 <time datetime="{{ $post->published_at?->toIso8601String() }}">{{ optional($post->published_at)->diffForHumans() ?? $post->created_at->diffForHumans() }}</time>
                                 @if($post->category)<span>·</span><a href="{{ route('home', ['category' => $post->category->slug]) }}" class="text-[#234e8a] hover:underline">{{ $post->category->name }}</a>@endif
                             </div>
