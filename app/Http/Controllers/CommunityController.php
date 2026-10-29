@@ -84,6 +84,46 @@ class CommunityController extends Controller
         return back()->with('status', $request->user()->following()->whereKey($user->id)->exists() ? $user->name.' takip edilmeye başlandı.' : $user->name.' takipten çıkarıldı.');
     }
 
+    public function categories(): View
+    {
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->withCount(['children'])
+            ->withCount(['posts' => fn ($query) => $query->where('status', 'published')])
+            ->orderBy('sort_order')->orderBy('name')->paginate(24);
+        return view('community.categories', compact('categories'));
+    }
+
+    public function category(Category $category): View
+    {
+        abort_unless($category->is_active, 404);
+        $posts = Post::query()->with(['author', 'category', 'tags'])
+            ->withCount(['comments' => fn ($query) => $query->where('status', 'visible'), 'reactions'])
+            ->where('status', 'published')->where('category_id', $category->id)
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->latest('published_at')->paginate(12);
+        return view('community.category', compact('category', 'posts'));
+    }
+
+    public function tags(): View
+    {
+        $tags = Tag::query()
+            ->withCount(['posts' => fn ($query) => $query->where('status', 'published')])
+            ->whereHas('posts', fn ($query) => $query->where('status', 'published'))
+            ->orderByDesc('posts_count')->orderBy('name')->paginate(48);
+        return view('community.tags', compact('tags'));
+    }
+
+    public function tag(Tag $tag): View
+    {
+        $posts = $tag->posts()->with(['author', 'category', 'tags'])
+            ->withCount(['comments' => fn ($query) => $query->where('status', 'visible'), 'reactions'])
+            ->where('status', 'published')
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->latest('published_at')->paginate(12);
+        return view('community.tag', compact('tag', 'posts'));
+    }
+
     public function show(Post $post): View
     {
         abort_unless($post->status === 'published' || (auth()->check() && (auth()->user()->hasRole('admin', 'editor') || auth()->id() === $post->user_id)), 404);
