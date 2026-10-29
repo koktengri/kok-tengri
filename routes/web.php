@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [CommunityController::class, 'index'])->name('home');
 Route::get('/members', [CommunityController::class, 'directory'])->name('members.index');
 Route::get('/members/{user}', [CommunityController::class, 'profile'])->name('members.show');
+Route::get('/categories', [CommunityController::class, 'categories'])->name('categories.index');
+Route::get('/categories/{category:slug}', [CommunityController::class, 'category'])->name('categories.show');
+Route::get('/tags', [CommunityController::class, 'tags'])->name('tags.index');
+Route::get('/tags/{tag:slug}', [CommunityController::class, 'tag'])->name('tags.show');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/register', [AuthController::class, 'create'])->name('register');
