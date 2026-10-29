@@ -55,6 +55,35 @@ class CommunityController extends Controller
         return view('community.index', compact('posts', 'categories', 'popularTags', 'memberCount', 'publishedCount'));
     }
 
+    public function directory(Request $request): View
+    {
+        $members = User::query()->withCount(['followers', 'following', 'posts'])
+            ->when($request->filled('q'), fn ($query) => $query->where('name', 'like', '%'.trim((string) $request->query('q')).'%'))
+            ->latest('id')->paginate(24)->withQueryString();
+        return view('community.member-directory', compact('members'));
+    }
+
+    public function profile(User $user): View
+    {
+        $user->loadCount(['followers', 'following']);
+        $posts = $user->posts()->with(['author', 'category', 'tags'])
+            ->withCount(['comments' => fn ($query) => $query->where('status', 'visible'), 'reactions'])
+            ->where('status', 'published')
+            ->where(fn ($query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()))
+            ->latest('published_at')->paginate(10);
+        $isFollowing = auth()->check() && auth()->id() !== $user->id ? auth()->user()->following()->whereKey($user->id)->exists() : false;
+        $followers = $user->followers()->latest('user_follows.created_at')->take(8)->get();
+        $following = $user->following()->latest('user_follows.created_at')->take(8)->get();
+        return view('community.profile', compact('user', 'posts', 'isFollowing', 'followers', 'following'));
+    }
+
+    public function toggleFollow(Request $request, User $user): RedirectResponse
+    {
+        abort_if($request->user()->is($user), 422, 'Kendini takip edemezsin.');
+        $request->user()->following()->toggle($user->id);
+        return back()->with('status', $request->user()->following()->whereKey($user->id)->exists() ? $user->name.' takip edilmeye başlandı.' : $user->name.' takipten çıkarıldı.');
+    }
+
     public function show(Post $post): View
     {
         abort_unless($post->status === 'published' || (auth()->check() && (auth()->user()->hasRole('admin', 'editor') || auth()->id() === $post->user_id)), 404);
