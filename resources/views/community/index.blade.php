@@ -53,16 +53,25 @@
             @endauth
         </nav>
     </div>
-    <form action="{{ route('home') }}" method="get" class="border-t border-slate-100 px-4 py-2 md:hidden">
-        <label class="flex h-9 items-center gap-2 rounded-lg bg-slate-100 px-3">
-            <svg class="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg>
-            <input name="q" value="{{ request('q') }}" type="search" placeholder="Toplulukta ara..." class="w-full bg-transparent text-sm outline-none">
-        </label>
-    </form>
+    <div class="border-t border-slate-100 px-4 py-2.5 md:hidden">
+        <div class="flex items-center justify-between">
+            <div class="inline-flex rounded-full bg-slate-100 p-1 text-xs font-semibold">
+                <a href="{{ route('home') }}" class="rounded-full bg-white px-4 py-2 text-slate-900">◉ Sosyal</a>
+                <a href="{{ route('categories.index') }}" class="rounded-full px-4 py-2 text-slate-500">Keşfet</a>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('members.index') }}" aria-label="Üyeler" class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-700">♙</a>
+                <button type="button" aria-label="Arama" onclick="document.getElementById('mobile-search').classList.toggle('hidden')" class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-700">⌕</button>
+            </div>
+        </div>
+        <form id="mobile-search" action="{{ route('home') }}" method="get" class="hidden pt-3">
+            <label class="flex h-10 items-center gap-2 rounded-xl bg-slate-100 px-3"><span class="text-slate-400">⌕</span><input name="q" value="{{ request('q') }}" type="search" placeholder="Toplulukta ara..." class="w-full bg-transparent text-sm outline-none"></label>
+        </form>
+    </div>
 </header>
 
-<main class="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:py-8">
-    <section class="mb-7 border-b border-slate-200 pb-7">
+<main class="mx-auto max-w-[1440px] px-4 py-4 pb-24 sm:px-6 lg:py-8 lg:pb-8">
+    <section class="mb-7 hidden border-b border-slate-200 pb-7 sm:block">
         <div class="max-w-3xl">
             <p class="mb-3 text-xs font-bold uppercase tracking-[.16em] text-[#234e8a]">Bağımsız topluluk</p>
             <h1 class="text-[32px] font-extrabold leading-tight tracking-[-.04em] sm:text-[42px]">Fikirler burada kök salar.</h1>
@@ -80,6 +89,26 @@
 
     @if(session('status'))
         <div class="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('status') }}</div>
+    @endif
+
+    <section class="mb-5 lg:hidden">
+        <div class="mb-3 flex items-center justify-between"><h2 class="text-sm font-bold">Hikâyeler</h2><a href="{{ route('members.index') }}" class="text-xs font-semibold text-[#234e8a]">Tüm üyeler →</a></div>
+        <div class="-mx-4 flex gap-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+            @forelse($posts->getCollection()->unique('user_id')->take(10) as $storyPost)
+                <a href="{{ route('members.show', $storyPost->author) }}" class="flex w-[62px] shrink-0 flex-col items-center gap-1.5">
+                    <span class="flex h-[58px] w-[58px] items-center justify-center rounded-full border-2 border-[#8eb4e8] bg-white p-1"><span class="flex h-full w-full items-center justify-center rounded-full bg-[#eaf0f8] text-base font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($storyPost->author->name, 0, 1)) }}</span></span>
+                    <span class="w-full truncate text-center text-[11px] text-slate-600">{{ \Illuminate\Support\Str::limit($storyPost->author->name, 10) }}</span>
+                </a>
+            @empty
+                <a href="{{ route('members.index') }}" class="flex w-[62px] shrink-0 flex-col items-center gap-1.5"><span class="flex h-[58px] w-[58px] items-center justify-center rounded-full border-2 border-dashed border-slate-300 text-2xl text-slate-400">+</span><span class="text-[11px] text-slate-500">Üyeler</span></a>
+            @endforelse
+        </div>
+    </section>
+    @if($popularTags->isNotEmpty())
+        <section class="mb-5 rounded-2xl border border-[#e3e9f2] bg-[#f0f5fc] p-4 lg:hidden">
+            <div class="flex items-center justify-between"><h2 class="text-sm font-bold text-[#234e8a]">Şimdi gündemde</h2><a href="{{ route('tags.index') }}" class="text-xs text-slate-500">Tümü ↗</a></div>
+            <div class="mt-3 flex flex-wrap gap-2">@foreach($popularTags->take(6) as $tag)<a href="{{ route('home', ['q' => $tag->name]) }}" class="rounded-full border border-white bg-white px-3 py-1.5 text-xs text-slate-600"># {{ $tag->name }}</a>@endforeach</div>
+        </section>
     @endif
 
     <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-[210px_minmax(0,1fr)_270px] xl:gap-8">
@@ -127,7 +156,7 @@
             </div>
 
             @forelse($posts as $post)
-                <article class="mb-4 border border-slate-200 bg-white p-5 transition-colors hover:border-slate-300 sm:rounded-xl sm:p-6">
+                <article class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 sm:mb-4 sm:rounded-xl sm:p-6">
                     <div class="flex items-start gap-3">
                         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf0f8] text-sm font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($post->author->name, 0, 1)) }}</div>
                         <div class="min-w-0 flex-1">
@@ -136,7 +165,7 @@
                                 <time datetime="{{ $post->published_at?->toIso8601String() }}">{{ optional($post->published_at)->diffForHumans() ?? $post->created_at->diffForHumans() }}</time>
                                 @if($post->category)<span>·</span><a href="{{ route('home', ['category' => $post->category->slug]) }}" class="text-[#234e8a] hover:underline">{{ $post->category->name }}</a>@endif
                             </div>
-                            <h3 class="mt-2 text-[18px] font-bold leading-snug tracking-[-.02em] sm:text-xl"><a href="{{ route('posts.show', $post) }}" class="hover:text-[#234e8a]">{{ $post->title }}</a></h3>
+                            <h3 class="mt-2 text-[17px] font-bold leading-snug tracking-[-.02em] sm:text-xl"><a href="{{ route('posts.show', $post) }}" class="hover:text-[#234e8a]">{{ $post->title }}</a></h3>
                             @if($post->excerpt)
                                 <p class="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{{ $post->excerpt }}</p>
                             @else
@@ -145,7 +174,7 @@
                             @if($post->tags->isNotEmpty())
                                 <div class="mt-3 flex flex-wrap gap-2">@foreach($post->tags as $tag)<a href="{{ route('home', ['q' => $tag->name]) }}" class="rounded-md bg-slate-100 px-2 py-1 text-xs text-slate-600 hover:bg-slate-200">#{{ $tag->name }}</a>@endforeach</div>
                             @endif
-                            <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-100 pt-3 text-xs text-slate-500">
+                            <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-100 pt-3 text-xs text-slate-500">
                                 <a href="{{ route('posts.show', $post) }}#comments" class="inline-flex items-center gap-1.5 hover:text-slate-900"><span>◯</span>{{ $post->comments_count }} yorum</a>
                                 <span class="inline-flex items-center gap-1.5"><span>♡</span>{{ $post->reactions_count }} tepki</span>
                                 <span class="inline-flex items-center gap-1.5"><span>↗</span>{{ number_format($post->views_count) }} görüntülenme</span>
@@ -201,5 +230,19 @@
         </aside>
     </div>
 </main>
+<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-2 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden" aria-label="Mobil gezinme">
+    <div class="mx-auto flex max-w-lg items-center justify-around">
+        <a href="{{ route('home') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-[#234e8a]"><span class="text-xl leading-5">⌂</span><span class="text-[10px] font-semibold">Ana sayfa</span></a>
+        <a href="{{ route('categories.index') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">◉</span><span class="text-[10px]">Keşfet</span></a>
+        @auth
+            <a href="{{ route('posts.create') }}" class="-mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-[#234e8a] text-3xl font-light text-white ring-4 ring-[#f7f8fa]" aria-label="Gönderi oluştur">+</a>
+            <a href="{{ route('bookmarks.index') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">♧</span><span class="text-[10px]">Kaydedilen</span></a>
+            <a href="{{ route('members.show', auth()->user()) }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span><span class="text-[10px]">Profilim</span></a>
+        @else
+            <a href="{{ route('register') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">＋</span><span class="text-[10px]">Katıl</span></a>
+            <a href="{{ route('login') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">♙</span><span class="text-[10px]">Giriş</span></a>
+        @endauth
+    </div>
+</nav>
 </body>
 </html>
