@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/liquid-glass.css') }}">
     <style>
         body{font-family:Inter,ui-sans-serif,system-ui,sans-serif}
         .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -16,10 +17,10 @@
     </style>
 </head>
 <body class="min-h-screen bg-[#f7f8fa] text-[#20242b] antialiased">
-<header class="sticky top-0 z-30 border-b border-slate-200 bg-white">
+<header class="kt-glass-nav sticky top-0 z-30 border-b border-slate-200 bg-white">
     <div class="mx-auto flex h-[68px] max-w-[1440px] items-center gap-5 px-4 sm:px-6">
         <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5" aria-label="Kök Tengri ana sayfa">
-            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#234e8a] text-lg font-extrabold text-white">K</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#234e8a] kt-glass-button text-lg font-extrabold text-white">K</span>
             <span class="text-[19px] font-extrabold tracking-tight">kök tengri</span>
         </a>
         <form action="{{ route('home') }}" method="get" class="hidden min-w-0 max-w-xl flex-1 md:block">
@@ -39,7 +40,7 @@
                 @if(auth()->user()->hasRole('admin', 'editor'))
                     <a href="{{ route('community.admin.comments.pending') }}" class="hidden rounded-lg px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 lg:inline-flex">Moderasyon</a>
                 @endif
-                <a href="{{ route('posts.create') }}" class="inline-flex h-10 items-center gap-2 rounded-lg bg-[#234e8a] px-3.5 font-semibold text-white hover:bg-[#193e72] sm:px-4">
+                <a href="{{ route('posts.create') }}" class="inline-flex h-10 items-center gap-2 rounded-lg bg-[#234e8a] kt-glass-button px-3.5 font-semibold text-white hover:bg-[#193e72] sm:px-4">
                     <span class="text-lg leading-none">+</span><span>Yazı yaz</span>
                 </a>
                 <div class="hidden items-center gap-2 border-l border-slate-200 pl-3 lg:flex">
@@ -49,7 +50,7 @@
                 <form method="post" action="{{ route('logout') }}" class="hidden sm:block">@csrf<button class="rounded-lg px-2 py-2 text-slate-500 hover:bg-slate-100">Çıkış</button></form>
             @else
                 <a href="{{ route('login') }}" class="rounded-lg px-3 py-2 font-semibold text-slate-700 hover:bg-slate-100">Giriş yap</a>
-                <a href="{{ route('register') }}" class="inline-flex h-10 items-center rounded-lg bg-[#234e8a] px-4 font-semibold text-white hover:bg-[#193e72]">Katıl</a>
+                <a href="{{ route('register') }}" class="inline-flex h-10 items-center rounded-lg bg-[#234e8a] kt-glass-button px-4 font-semibold text-white hover:bg-[#193e72]">Katıl</a>
             @endauth
         </nav>
     </div>
@@ -78,9 +79,9 @@
             <p class="mt-3 max-w-2xl text-[15px] leading-7 text-slate-600 sm:text-base">Tarih, kültür, teknoloji ve gündem üzerine oku; kendi deneyimini paylaş, farklı fikirlerle tanış.</p>
             <div class="mt-5 flex flex-wrap items-center gap-3">
                 @auth
-                    <a href="{{ route('posts.create') }}" class="inline-flex h-10 items-center rounded-lg bg-[#234e8a] px-4 text-sm font-semibold text-white hover:bg-[#193e72]">Topluluğa yaz</a>
+                    <a href="{{ route('posts.create') }}" class="inline-flex h-10 items-center rounded-lg bg-[#234e8a] kt-glass-button px-4 text-sm font-semibold text-white hover:bg-[#193e72]">Topluluğa yaz</a>
                 @else
-                    <a href="{{ route('register') }}" class="inline-flex h-10 items-center rounded-lg bg-[#234e8a] px-4 text-sm font-semibold text-white hover:bg-[#193e72]">Ücretsiz katıl</a>
+                    <a href="{{ route('register') }}" class="inline-flex h-10 items-center rounded-lg bg-[#234e8a] kt-glass-button px-4 text-sm font-semibold text-white hover:bg-[#193e72]">Ücretsiz katıl</a>
                 @endauth
                 <span class="text-sm text-slate-500">Okumak için hesap gerekmez.</span>
             </div>
@@ -96,7 +97,7 @@
         <div class="-mx-4 flex gap-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
             @forelse($posts->getCollection()->unique('user_id')->take(10) as $storyPost)
                 <a href="{{ route('members.show', $storyPost->author) }}" class="flex w-[62px] shrink-0 flex-col items-center gap-1.5">
-                    <span class="flex h-[58px] w-[58px] items-center justify-center rounded-full border-2 border-[#8eb4e8] bg-white p-1"><span class="flex h-full w-full items-center justify-center rounded-full bg-[#eaf0f8] text-base font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($storyPost->author->name, 0, 1)) }}</span></span>
+                    <span class="flex h-[58px] w-[58px] items-center justify-center rounded-full border-2 border-[#8eb4e8] bg-white p-1"><span class="flex h-full w-full items-center justify-center rounded-full bg-[#eaf0f8] kt-glass-soft text-base font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($storyPost->author->name, 0, 1)) }}</span></span>
                     <span class="w-full truncate text-center text-[11px] text-slate-600">{{ \Illuminate\Support\Str::limit($storyPost->author->name, 10) }}</span>
                 </a>
             @empty
@@ -116,11 +117,11 @@
             <div class="sticky top-[92px]">
                 <p class="mb-3 px-3 text-[11px] font-bold uppercase tracking-[.14em] text-slate-400">Keşfet</p>
                 <nav class="space-y-1">
-                    <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ !request('category') ? 'bg-[#eaf0f8] font-semibold text-[#234e8a]' : 'text-slate-600 hover:bg-white' }}">
+                    <a href="{{ route('home') }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ !request('category') ? 'bg-[#eaf0f8] kt-glass-soft font-semibold text-[#234e8a]' : 'text-slate-600 hover:bg-white' }}">
                         <span class="w-5 text-center">⌂</span> Tüm gönderiler
                     </a>
                     @foreach($categories as $category)
-                        <a href="{{ route('home', array_filter(['category' => $category->slug, 'q' => request('q')])) }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ request('category') === $category->slug ? 'bg-[#eaf0f8] font-semibold text-[#234e8a]' : 'text-slate-600 hover:bg-white' }}">
+                        <a href="{{ route('home', array_filter(['category' => $category->slug, 'q' => request('q')])) }}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm {{ request('category') === $category->slug ? 'bg-[#eaf0f8] kt-glass-soft font-semibold text-[#234e8a]' : 'text-slate-600 hover:bg-white' }}">
                             <span class="w-5 text-center text-slate-400">#</span><span class="truncate">{{ $category->name }}</span>
                         </a>
                     @endforeach
@@ -156,9 +157,9 @@
             </div>
 
             @forelse($posts as $post)
-                <article class="mb-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 sm:mb-4 sm:rounded-xl sm:p-6">
+                <article class="kt-glass-card mb-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 sm:mb-4 sm:rounded-xl sm:p-6">
                     <div class="flex items-start gap-3">
-                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf0f8] text-sm font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($post->author->name, 0, 1)) }}</div>
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf0f8] kt-glass-soft text-sm font-bold text-[#234e8a]">{{ mb_strtoupper(mb_substr($post->author->name, 0, 1)) }}</div>
                         <div class="min-w-0 flex-1">
                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
                                 <a href="{{ route('members.show', $post->author) }}" class="font-semibold text-slate-800 hover:text-[#234e8a]">{{ $post->author->name }}</a><span>·</span>
@@ -188,7 +189,7 @@
                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-xl text-slate-500">⌕</div>
                     <h3 class="mt-4 text-lg font-bold">Burada henüz bir şey yok</h3>
                     <p class="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">Aradığını bulamadıysan başka bir kelime dene ya da topluluğun ilk gönderisini sen paylaş.</p>
-                    <div class="mt-5 flex justify-center gap-3"><a href="{{ route('home') }}" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">Akışa dön</a>@auth<a href="{{ route('posts.create') }}" class="rounded-lg bg-[#234e8a] px-4 py-2 text-sm font-semibold text-white">İlk yazıyı paylaş</a>@else<a href="{{ route('register') }}" class="rounded-lg bg-[#234e8a] px-4 py-2 text-sm font-semibold text-white">Topluluğa katıl</a>@endauth</div>
+                    <div class="mt-5 flex justify-center gap-3"><a href="{{ route('home') }}" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">Akışa dön</a>@auth<a href="{{ route('posts.create') }}" class="rounded-lg bg-[#234e8a] kt-glass-button px-4 py-2 text-sm font-semibold text-white">İlk yazıyı paylaş</a>@else<a href="{{ route('register') }}" class="rounded-lg bg-[#234e8a] kt-glass-button px-4 py-2 text-sm font-semibold text-white">Topluluğa katıl</a>@endauth</div>
                 </div>
             @endforelse
             <div class="mt-6">{{ $posts->withQueryString()->links() }}</div>
@@ -203,9 +204,9 @@
                     <div><p class="text-2xl font-extrabold tracking-tight">{{ number_format($publishedCount) }}</p><p class="mt-1 text-xs text-slate-500">Gönderi</p></div>
                 </div>
                 @guest
-                    <a href="{{ route('register') }}" class="mt-4 flex h-10 items-center justify-center rounded-lg bg-[#234e8a] text-sm font-semibold text-white hover:bg-[#193e72]">Aramıza katıl</a>
+                    <a href="{{ route('register') }}" class="mt-4 flex h-10 items-center justify-center rounded-lg bg-[#234e8a] kt-glass-button text-sm font-semibold text-white hover:bg-[#193e72]">Aramıza katıl</a>
                 @else
-                    <a href="{{ route('posts.create') }}" class="mt-4 flex h-10 items-center justify-center rounded-lg bg-[#234e8a] text-sm font-semibold text-white hover:bg-[#193e72]">Bir şey paylaş</a>
+                    <a href="{{ route('posts.create') }}" class="mt-4 flex h-10 items-center justify-center rounded-lg bg-[#234e8a] kt-glass-button text-sm font-semibold text-white hover:bg-[#193e72]">Bir şey paylaş</a>
                 @endguest
             </section>
 
@@ -230,7 +231,7 @@
         </aside>
     </div>
 </main>
-<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden" aria-label="Mobil gezinme">
+<nav class="kt-glass-bottom fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden" aria-label="Mobil gezinme">
     <div class="mx-auto flex max-w-lg items-end justify-around">
         <a href="{{ route('home') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-[#234e8a]">
             <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
@@ -241,7 +242,7 @@
             <span class="text-[10px] leading-none">Keşfet</span>
         </a>
         @auth
-            <a href="{{ route('posts.create') }}" class="-mt-5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#234e8a] text-white ring-4 ring-[#f7f8fa]" aria-label="Gönderi oluştur">
+            <a href="{{ route('posts.create') }}" class="-mt-5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#234e8a] kt-glass-button text-white ring-4 ring-[#f7f8fa]" aria-label="Gönderi oluştur">
                 <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </a>
             <a href="{{ route('bookmarks.index') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-slate-500">
