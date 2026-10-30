@@ -230,17 +230,37 @@
         </aside>
     </div>
 </main>
-<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-2 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden" aria-label="Mobil gezinme">
-    <div class="mx-auto flex max-w-lg items-center justify-around">
-        <a href="{{ route('home') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-[#234e8a]"><span class="text-xl leading-5">⌂</span><span class="text-[10px] font-semibold">Ana sayfa</span></a>
-        <a href="{{ route('categories.index') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">◉</span><span class="text-[10px]">Keşfet</span></a>
+<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 pb-[max(.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden" aria-label="Mobil gezinme">
+    <div class="mx-auto flex max-w-lg items-end justify-around">
+        <a href="{{ route('home') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-[#234e8a]">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>
+            <span class="text-[10px] font-semibold leading-none">Ana sayfa</span>
+        </a>
+        <a href="{{ route('categories.index') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-slate-500">
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7.5"/><path d="m16.5 16.5 4 4"/></svg>
+            <span class="text-[10px] leading-none">Keşfet</span>
+        </a>
         @auth
-            <a href="{{ route('posts.create') }}" class="-mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-[#234e8a] text-3xl font-light text-white ring-4 ring-[#f7f8fa]" aria-label="Gönderi oluştur">+</a>
-            <a href="{{ route('bookmarks.index') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">♧</span><span class="text-[10px]">Kaydedilen</span></a>
-            <a href="{{ route('members.show', auth()->user()) }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold">{{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span><span class="text-[10px]">Profilim</span></a>
+            <a href="{{ route('posts.create') }}" class="-mt-5 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#234e8a] text-white ring-4 ring-[#f7f8fa]" aria-label="Gönderi oluştur">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </a>
+            <a href="{{ route('bookmarks.index') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-slate-500">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-4-6 4z"/></svg>
+                <span class="text-[10px] leading-none">Kaydedilen</span>
+            </a>
+            <a href="{{ route('members.show', auth()->user()) }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-slate-500">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+                <span class="text-[10px] leading-none">Profilim</span>
+            </a>
         @else
-            <a href="{{ route('register') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">＋</span><span class="text-[10px]">Katıl</span></a>
-            <a href="{{ route('login') }}" class="flex min-w-[52px] flex-col items-center gap-1 text-slate-500"><span class="text-xl leading-5">♙</span><span class="text-[10px]">Giriş</span></a>
+            <a href="{{ route('register') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-slate-500">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                <span class="text-[10px] leading-none">Katıl</span>
+            </a>
+            <a href="{{ route('login') }}" class="flex min-w-[58px] flex-col items-center gap-1.5 py-1 text-slate-500">
+                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>
+                <span class="text-[10px] leading-none">Giriş</span>
+            </a>
         @endauth
     </div>
 </nav>
