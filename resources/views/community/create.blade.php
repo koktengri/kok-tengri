@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yeni gönderi · Kök Tengri</title><script src="https://cdn.tailwindcss.com"></script>    <link rel="stylesheet" href="{{ asset('css/repost-theme.css') }}">
 </head>
-<body class="kt-repost" class="bg-slate-50 text-slate-900"><main class="mx-auto max-w-3xl px-4 py-8"><a href="/" class="font-semibold text-blue-700">← Akışa dön</a><h1 class="mt-5 text-3xl font-bold">Yeni gönderi</h1>
+<body class="kt-repost" class="kt-repost" class="bg-slate-50 text-slate-900"><main class="mx-auto max-w-3xl px-4 py-8"><a href="/" class="font-semibold text-blue-700">← Akışa dön</a><h1 class="mt-5 text-3xl font-bold">Yeni gönderi</h1>
 @if ($errors->any())<div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-red-700">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
 <form method="post" action="{{ route('posts.store') }}" class="mt-6 space-y-5 rounded-xl border bg-white p-5">@csrf
 <label class="block font-medium">Başlık<input name="title" required maxlength="180" value="{{ old('title') }}" class="mt-2 w-full rounded-lg border px-3 py-3 text-base"></label>
