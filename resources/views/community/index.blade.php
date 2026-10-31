@@ -10,13 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/liquid-glass.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/repost-theme.css') }}">
     <style>
         body{font-family:Inter,ui-sans-serif,system-ui,sans-serif}
         .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
         .line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
     </style>
 </head>
-<body class="min-h-screen bg-[#f7f8fa] text-[#20242b] antialiased">
+<body class="kt-repost min-h-screen bg-[#f7f8fa] text-[#20242b] antialiased">
 <header class="kt-glass-nav sticky top-0 z-30 border-b border-slate-200 bg-white">
     <div class="mx-auto flex h-[68px] max-w-[1440px] items-center gap-5 px-4 sm:px-6">
         <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5" aria-label="Kök Tengri ana sayfa">
